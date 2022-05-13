@@ -1,5 +1,8 @@
 const express = require("express");
 const app = express();
+const Port = 3000;
+const { User } = require("./models");
+
 function isAuthorized(req,res, next) {
   const auth = req.headers.authorization;
   if (auth === 'secretpassword') {
@@ -10,6 +13,7 @@ function isAuthorized(req,res, next) {
   }
 }
 const port = 3000;
+
 
 app.get("/", (req, res) => res.send("Hello World!"));
 app.get("/products", (req,res) => {
@@ -32,13 +36,11 @@ app.get("/products", (req,res) => {
   res.json(products);
 })
 
-app.get('/users',isAuthorized,(req,res) => {
-    res.json([{
-      id: 1,
-      name: 'User Userson'
-    }])
-  })
-  
+  app.get('/users', isAuthorized, async (req,res) => {
+    const users = await User.findAll();
+    res.json(users);
+    })
+    
   app.get('/products', (req, res) => {
     res.json([{
       id: 1,
